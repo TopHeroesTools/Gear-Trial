@@ -76,11 +76,6 @@
     border-color: rgba(251,191,36,.35);
   }
 
-  .btn.primary {
-    background: linear-gradient(180deg, rgba(110,231,183,.2), transparent 40%), #0c1514;
-    border-color: rgba(110,231,183,.35);
-  }
-
   .grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -202,6 +197,50 @@
     font-size: 18px;
   }
 
+  .result {
+    display: grid;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .totals {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+    gap: 14px;
+  }
+
+  .total-box {
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: #0b0f1d;
+    box-shadow: var(--shadow);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+
+  .total-box h3 {
+    margin: 0 0 6px;
+    font-size: 16px;
+    color: var(--muted);
+  }
+
+  .total {
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .total-box.complete {
+    border-color: var(--accent);
+    box-shadow:
+      0 0 0 2px rgba(110,231,183,0.28),
+      0 0 16px rgba(110,231,183,0.22);
+    background: linear-gradient(180deg, rgba(110,231,183,.10), transparent 55%), #0b0f1d;
+  }
+
+  .total-box.complete .total {
+    color: var(--accent);
+  }
+
   .foot {
     margin-top: 18px;
     color: var(--muted);
@@ -224,6 +263,10 @@
     .calc-top {
       flex-direction: column;
     }
+
+    .totals {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
 </head>
@@ -232,7 +275,7 @@
   <header class="row" style="gap:12px; align-items:flex-end;">
     <div>
       <h1>Gear Trial Calculator</h1>
-      <div class="sub">Enter your current amount for each item to see your current points.</div>
+      <div class="sub">Enter your current amount for each item to see your total points and how many remain until max reward.</div>
     </div>
   </header>
 
@@ -243,10 +286,26 @@
 
   <section id="itemsGrid" class="grid" aria-live="polite"></section>
 
+  <section class="result">
+    <div class="totals">
+      <div class="total-box">
+        <h3>Total Points</h3>
+        <div class="total" id="currentTotal">0</div>
+      </div>
+
+      <div class="total-box" id="remainingBox">
+        <h3>Remaining Points</h3>
+        <div class="total" id="pointsNeeded">1,000,000</div>
+      </div>
+    </div>
+  </section>
+
   <footer class="foot">Mobile-friendly version styled to match your original calculator layout.</footer>
 </div>
 
 <script>
+  const MAX_REWARD_POINTS = 1000000;
+
   const rows = [
     { action: "Gear Enhance Ruins", amountNeeded: 5, pointsPerAction: 1 },
     { action: "Solar Gold Ingots", amountNeeded: 1, pointsPerAction: 50 },
@@ -314,14 +373,29 @@
   }
 
   function updateTotals() {
+    let total = 0;
+
     rows.forEach(row => {
       const key = slugify(row.action);
       const inventory = getInventory(key);
       const myPoints = calcPoints(row, inventory);
+      total += myPoints;
 
       const itemPoints = document.getElementById(`${key}-points`);
       if (itemPoints) itemPoints.textContent = formatNumber(myPoints);
     });
+
+    const remaining = Math.max(0, MAX_REWARD_POINTS - total);
+
+    document.getElementById("currentTotal").textContent = formatNumber(total);
+    document.getElementById("pointsNeeded").textContent = formatNumber(remaining);
+
+    const remainingBox = document.getElementById("remainingBox");
+    if (remaining === 0) {
+      remainingBox.classList.add("complete");
+    } else {
+      remainingBox.classList.remove("complete");
+    }
 
     updateQueryString(false);
   }
