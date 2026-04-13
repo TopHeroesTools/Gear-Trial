@@ -88,31 +88,6 @@
     margin-top: 16px;
   }
 
-  .totals {
-    display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
-    gap: 14px;
-  }
-
-  .total-box {
-    padding: 14px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: #0b0f1d;
-    box-shadow: var(--shadow);
-  }
-
-  .total-box h3 {
-    margin: 0 0 6px;
-    font-size: 16px;
-    color: var(--muted);
-  }
-
-  .total {
-    font-size: 24px;
-    font-weight: 700;
-  }
-
   .card {
     background: linear-gradient(180deg, rgba(255,255,255,.02), transparent 60%), var(--card);
     border: 1px solid var(--border);
@@ -155,7 +130,7 @@
 
   .mini-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
   }
 
@@ -198,11 +173,33 @@
     border: 1px solid var(--border);
     outline: none;
     font: inherit;
+    appearance: none;
+    -webkit-appearance: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
-  input[type="number"]:focus {
-    border-color: var(--accent-2);
-    box-shadow: 0 0 0 3px rgba(138,180,255,.25);
+  input[type="number"]:placeholder-shown {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 2px rgba(251,113,133,0.28);
+  }
+
+  input[type="number"]:not(:placeholder-shown) {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(110,231,183,0.28);
+  }
+
+  input[type="number"]:focus:placeholder-shown {
+    border-color: var(--danger);
+    box-shadow:
+      0 0 0 2px rgba(251,113,133,0.32),
+      0 0 10px rgba(251,113,133,0.28);
+  }
+
+  input[type="number"]:focus:not(:placeholder-shown) {
+    border-color: var(--accent);
+    box-shadow:
+      0 0 0 2px rgba(110,231,183,0.38),
+      0 0 10px rgba(110,231,183,0.35);
   }
 
   .item-points {
@@ -243,13 +240,21 @@
     white-space: nowrap;
   }
 
+  .summary-row td {
+    font-weight: 700;
+    border-top: 1px solid var(--border);
+  }
+
+  .summary-row td:last-child {
+    color: var(--accent);
+  }
+
   .foot {
     margin-top: 18px;
     color: var(--muted);
     font-size: 12px;
   }
 
-  /* Hide table on small screens to avoid horizontal scrolling */
   .desktop-breakdown {
     display: block;
   }
@@ -265,10 +270,6 @@
 
     h1 {
       font-size: 24px;
-    }
-
-    .totals {
-      grid-template-columns: 1fr;
     }
 
     .mini-grid {
@@ -311,6 +312,18 @@
     .mobile-pair span:first-child {
       color: var(--muted);
     }
+
+    .mobile-summary {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      background: #0b0f1d;
+      font-weight: 700;
+    }
+
+    .mobile-summary .mobile-pair strong {
+      color: var(--accent);
+    }
   }
 </style>
 </head>
@@ -331,18 +344,6 @@
   <section id="itemsGrid" class="grid" aria-live="polite"></section>
 
   <section class="result">
-    <div class="totals">
-      <div class="total-box">
-        <h3>Current Total Points</h3>
-        <div class="total" id="currentTotal">0</div>
-      </div>
-
-      <div class="total-box">
-        <h3>Points Needed Until Max Reward</h3>
-        <div class="total" id="pointsNeeded">1,000,000</div>
-      </div>
-    </div>
-
     <div class="card desktop-breakdown">
       <table>
         <thead>
@@ -461,9 +462,10 @@
       const mobileRow = document.createElement("div");
       mobileRow.className = "mobile-row";
       mobileRow.innerHTML = `
+        <div class="mobile-row-title">${row.action}</div>
         <div class="mobile-pair"><span>Amount Needed</span><strong>${formatNumber(row.amountNeeded)}</strong></div>
         <div class="mobile-pair"><span>Points Rewarded</span><strong>${formatNumber(row.pointsPerAction)}</strong></div>
-        <div class="mobile-pair"><span>My Inventory</span><strong>${formatNumber(inventory)}</strong></div>
+        <div class="mobile-pair"><span>My Resources</span><strong>${formatNumber(inventory)}</strong></div>
         <div class="mobile-pair"><span>My Points</span><strong>${formatNumber(myPoints)}</strong></div>
       `;
       mobileBreakdown.appendChild(mobileRow);
@@ -471,8 +473,20 @@
 
     const remaining = Math.max(0, MAX_REWARD_POINTS - total);
 
-    document.getElementById("currentTotal").textContent = formatNumber(total);
-    document.getElementById("pointsNeeded").textContent = formatNumber(remaining);
+    const summaryRow = document.createElement("tr");
+    summaryRow.className = "summary-row";
+    summaryRow.innerHTML = `
+      <td colspan="3">Remaining Points Needed</td>
+      <td class="num">${formatNumber(remaining)}</td>
+    `;
+    tbody.appendChild(summaryRow);
+
+    const mobileSummary = document.createElement("div");
+    mobileSummary.className = "mobile-summary";
+    mobileSummary.innerHTML = `
+      <div class="mobile-pair"><span>Remaining Points Needed</span><strong>${formatNumber(remaining)}</strong></div>
+    `;
+    mobileBreakdown.appendChild(mobileSummary);
 
     updateQueryString(false);
   }
