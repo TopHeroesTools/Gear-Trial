@@ -319,7 +319,7 @@
   <header class="row" style="gap:12px; align-items:flex-end;">
     <div>
       <h1>Gear Trial Calculator</h1>
-      <div class="sub">Enter your inventory for each item to see your current points and how many remain until max reward.</div>
+      <div class="sub">Enter your current amount for each item to see your current points and how many remain until max reward.</div>
     </div>
   </header>
 
@@ -347,10 +347,9 @@
       <table>
         <thead>
           <tr>
-            <th>Action</th>
             <th>Amount Needed</th>
             <th>Points Rewarded</th>
-            <th>My Inventory</th>
+            <th>My Resources</th>
             <th>My Points</th>
           </tr>
         </thead>
@@ -368,11 +367,11 @@
   const MAX_REWARD_POINTS = 1000000;
 
   const rows = [
-    { action: "Consume Gear Enhance Ruins", amountNeeded: 5, pointsPerAction: 1 },
-    { action: "Consume Solar Gold Ingots", amountNeeded: 1, pointsPerAction: 50 },
-    { action: "Consume Mythic Promotion Stone", amountNeeded: 1, pointsPerAction: 20000 },
-    { action: "Consume Legendary Promotion Stone", amountNeeded: 2, pointsPerAction: 5000 },
-    { action: "Consume Titan Mark", amountNeeded: 2, pointsPerAction: 6000 }
+    { action: "Gear Enhance Ruins", amountNeeded: 5, pointsPerAction: 1 },
+    { action: "Solar Gold Ingots", amountNeeded: 1, pointsPerAction: 50 },
+    { action: "Mythic Promotion Stone", amountNeeded: 1, pointsPerAction: 20000 },
+    { action: "Legendary Promotion Stone", amountNeeded: 2, pointsPerAction: 5000 },
+    { action: "Titan Mark", amountNeeded: 2, pointsPerAction: 6000 }
   ];
 
   const slugify = s => s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
@@ -411,14 +410,10 @@
             <div class="stat-label">Points Rewarded</div>
             <div class="stat-value">${formatNumber(row.pointsPerAction)}</div>
           </div>
-          <div class="stat">
-            <div class="stat-label">Action Type</div>
-            <div class="stat-value">Consume</div>
-          </div>
         </div>
 
         <div class="input-wrap">
-          <label class="input-label" for="${key}">My Inventory</label>
+          <label class="input-label" for="${key}">My Resources</label>
           <input type="number" id="${key}" data-key="${key}" min="0" step="any" inputmode="decimal" placeholder="0" />
         </div>
 
@@ -456,7 +451,6 @@
 
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td>${row.action}</td>
         <td class="num">${formatNumber(row.amountNeeded)}</td>
         <td class="num">${formatNumber(row.pointsPerAction)}</td>
         <td class="num">${formatNumber(inventory)}</td>
@@ -467,7 +461,6 @@
       const mobileRow = document.createElement("div");
       mobileRow.className = "mobile-row";
       mobileRow.innerHTML = `
-        <div class="mobile-row-title">${row.action}</div>
         <div class="mobile-pair"><span>Amount Needed</span><strong>${formatNumber(row.amountNeeded)}</strong></div>
         <div class="mobile-pair"><span>Points Rewarded</span><strong>${formatNumber(row.pointsPerAction)}</strong></div>
         <div class="mobile-pair"><span>My Inventory</span><strong>${formatNumber(inventory)}</strong></div>
