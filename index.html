@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Gear Trial Inventory Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Gear Trial Calculator</title>
 <style>
   :root {
     --bg: #0f1220;
@@ -16,33 +16,45 @@
     --danger: #fb7185;
     --border: #273043;
     --shadow: 0 10px 30px rgba(0, 0, 0, .35);
-    --header: #e7c8e7;
-    --table-bg: #f6f2f7;
-    --table-text: #1f2430;
   }
 
   * { box-sizing: border-box; }
+  html, body { min-height: 100%; }
+
   body {
     margin: 0;
-    padding: 24px;
+    padding: 18px;
     background:
       radial-gradient(1200px 600px at 80% -20%, rgba(138,180,255,.15), transparent),
       radial-gradient(800px 400px at -10% 10%, rgba(110,231,183,.12), transparent),
       var(--bg);
     color: var(--text);
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, sans-serif;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     line-height: 1.45;
   }
 
-  .wrap { max-width: 1100px; margin: 0 auto; }
-  h1 { margin: 0 0 6px; font-size: 30px; }
-  .sub { color: var(--muted); margin-bottom: 18px; }
+  h1 {
+    margin: 0 0 6px;
+    font-size: 28px;
+    letter-spacing: .2px;
+  }
 
-  .controls {
+  .sub {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 18px;
+  }
+
+  .wrap {
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  .row {
     display: flex;
     gap: 10px;
+    align-items: center;
     flex-wrap: wrap;
-    margin-bottom: 16px;
   }
 
   .btn {
@@ -54,11 +66,51 @@
     border-radius: 10px;
     cursor: pointer;
     box-shadow: var(--shadow);
+    font: inherit;
   }
+
   .btn:hover { border-color: var(--accent-2); }
+
   .btn.warn {
     background: linear-gradient(180deg, rgba(251,191,36,.22), transparent 40%), #161309;
     border-color: rgba(251,191,36,.35);
+  }
+
+  .btn.primary {
+    background: linear-gradient(180deg, rgba(110,231,183,.2), transparent 40%), #0c1514;
+    border-color: rgba(110,231,183,.35);
+  }
+
+  .result {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: 1fr;
+    margin-top: 16px;
+  }
+
+  .totals {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+    gap: 14px;
+  }
+
+  .total-box {
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: #0b0f1d;
+    box-shadow: var(--shadow);
+  }
+
+  .total-box h3 {
+    margin: 0 0 6px;
+    font-size: 16px;
+    color: var(--muted);
+  }
+
+  .total {
+    font-size: 24px;
+    font-weight: 700;
   }
 
   .card {
@@ -69,214 +121,359 @@
     box-shadow: var(--shadow);
   }
 
-  .table-wrap {
-    overflow-x: auto;
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .calc-item {
+    border: 1px solid var(--border);
     border-radius: 12px;
+    background: #0b0f1d;
+    padding: 14px;
+  }
+
+  .calc-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: start;
+    margin-bottom: 12px;
+  }
+
+  .calc-title {
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .muted {
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .mini-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .stat {
+    background: rgba(255,255,255,.02);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+  }
+
+  .stat-label {
+    color: var(--muted);
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  .stat-value {
+    font-weight: 700;
+    font-size: 15px;
+    word-break: break-word;
+  }
+
+  .input-wrap {
+    margin-top: 12px;
+  }
+
+  .input-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  input[type="number"] {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: #0d1020;
+    color: var(--text);
+    border: 1px solid var(--border);
+    outline: none;
+    font: inherit;
+  }
+
+  input[type="number"]:focus {
+    border-color: var(--accent-2);
+    box-shadow: 0 0 0 3px rgba(138,180,255,.25);
+  }
+
+  .item-points {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .item-points strong {
+    font-size: 18px;
   }
 
   table {
     width: 100%;
     border-collapse: collapse;
-    background: var(--table-bg);
-    color: var(--table-text);
-    min-width: 760px;
   }
 
-  thead th {
-    background: var(--header);
-    font-weight: 700;
-    text-align: center;
-    border: 1px solid #555;
-    padding: 10px 8px;
+  th, td {
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
   }
 
-  thead .title-row th {
-    font-size: 18px;
-    letter-spacing: .2px;
-    padding: 12px 8px;
+  th {
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: .3px;
   }
 
-  tbody td {
-    border: 1px solid #555;
-    padding: 10px 8px;
-    vertical-align: middle;
-  }
-
-  tbody td:first-child {
-    width: 36%;
-  }
-
-  .num {
+  td.num {
     text-align: right;
     white-space: nowrap;
   }
 
-  .inventory-input {
-    width: 100%;
-    min-width: 120px;
-    padding: 8px 10px;
-    border: 1px solid #8f8f8f;
-    border-radius: 8px;
-    font: inherit;
-    text-align: right;
-    background: white;
-    color: #111827;
-  }
-
-  .inventory-input:focus {
-    outline: none;
-    border-color: #5b8def;
-    box-shadow: 0 0 0 3px rgba(91,141,239,.2);
-  }
-
-  .summary-label {
-    font-weight: 700;
-    background: #f0edf2;
-  }
-
-  .summary-value {
-    font-weight: 800;
-    font-size: 20px;
-    background: #f0edf2;
-  }
-
-  .danger {
-    color: #b42318;
-  }
-
   .foot {
-    margin-top: 14px;
+    margin-top: 18px;
     color: var(--muted);
     font-size: 12px;
   }
 
+  /* Hide table on small screens to avoid horizontal scrolling */
+  .desktop-breakdown {
+    display: block;
+  }
+
+  .mobile-breakdown {
+    display: none;
+  }
+
   @media (max-width: 700px) {
-    body { padding: 14px; }
-    h1 { font-size: 24px; }
+    body {
+      padding: 14px;
+    }
+
+    h1 {
+      font-size: 24px;
+    }
+
+    .totals {
+      grid-template-columns: 1fr;
+    }
+
+    .mini-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .calc-top {
+      flex-direction: column;
+    }
+
+    .desktop-breakdown {
+      display: none;
+    }
+
+    .mobile-breakdown {
+      display: grid;
+      gap: 10px;
+    }
+
+    .mobile-row {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      background: #0b0f1d;
+    }
+
+    .mobile-row-title {
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .mobile-pair {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 4px 0;
+      font-size: 14px;
+    }
+
+    .mobile-pair span:first-child {
+      color: var(--muted);
+    }
   }
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Gear Trial Inventory Calculator</h1>
-    <div class="sub">Enter your inventory amounts to see your current point total and how many points remain until max reward.</div>
+<div class="wrap">
+  <header class="row" style="gap:12px; align-items:flex-end;">
+    <div>
+      <h1>Gear Trial Calculator</h1>
+      <div class="sub">Enter your inventory for each item to see your current points and how many remain until max reward.</div>
+    </div>
+  </header>
 
-    <div class="controls">
-      <button class="btn warn" id="resetBtn">Reset Inventory</button>
-      <button class="btn" id="copyLinkBtn">Copy Results Link</button>
+  <div class="row" style="margin-top:8px; gap:8px;">
+    <button class="btn warn" id="resetBtn">Reset Inventory</button>
+    <button class="btn" id="copyLinkBtn">Copy Results Link</button>
+  </div>
+
+  <section id="itemsGrid" class="grid" aria-live="polite"></section>
+
+  <section class="result">
+    <div class="totals">
+      <div class="total-box">
+        <h3>Current Total Points</h3>
+        <div class="total" id="currentTotal">0</div>
+      </div>
+
+      <div class="total-box">
+        <h3>Points Needed Until Max Reward</h3>
+        <div class="total" id="pointsNeeded">1,000,000</div>
+      </div>
     </div>
 
-    <div class="card table-wrap">
-      <table aria-label="Gear Trial Inventory Check for Resource Rewards">
+    <div class="card desktop-breakdown">
+      <table>
         <thead>
-          <tr class="title-row">
-            <th colspan="5">Gear Trial Inventory Check for Resource Rewards</th>
-          </tr>
           <tr>
             <th>Action</th>
             <th>Amount Needed</th>
             <th>Points Rewarded</th>
             <th>My Inventory</th>
-            <th>Points Rewarded</th>
+            <th>My Points</th>
           </tr>
         </thead>
-        <tbody id="tableBody"></tbody>
+        <tbody id="breakdown"></tbody>
       </table>
     </div>
 
-    <div class="foot">Calculator based on your reference layout. “My Inventory” is editable user input.</div>
-  </div>
+    <div class="card mobile-breakdown" id="mobileBreakdown"></div>
+  </section>
+
+  <footer class="foot">Mobile-friendly version styled to match your original calculator layout.</footer>
+</div>
 
 <script>
   const MAX_REWARD_POINTS = 1000000;
 
   const rows = [
-    { action: "Consume Gear Enhance Ruins", amountNeeded: 5, pointsPerAction: 1, inventory: 478500 },
-    { action: "Consume Solar Gold Ingots", amountNeeded: 1, pointsPerAction: 50, inventory: 16700 },
-    { action: "Consume Mythic Promotion Stone", amountNeeded: 1, pointsPerAction: 20000, inventory: 1 },
-    { action: "Consume Legendary Promotion Stone", amountNeeded: 2, pointsPerAction: 5000, inventory: 5 },
-    { action: "Consume Titan Mark", amountNeeded: 2, pointsPerAction: 6000, inventory: 5 }
+    { action: "Consume Gear Enhance Ruins", amountNeeded: 5, pointsPerAction: 1 },
+    { action: "Consume Solar Gold Ingots", amountNeeded: 1, pointsPerAction: 50 },
+    { action: "Consume Mythic Promotion Stone", amountNeeded: 1, pointsPerAction: 20000 },
+    { action: "Consume Legendary Promotion Stone", amountNeeded: 2, pointsPerAction: 5000 },
+    { action: "Consume Titan Mark", amountNeeded: 2, pointsPerAction: 6000 }
   ];
 
-  const slugify = s => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  const slugify = s => s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
 
   function formatNumber(n) {
-    return Number(n || 0).toLocaleString();
+    return Number(n || 0).toLocaleString(undefined, { maximumFractionDigits: 2 });
   }
 
-  function calcRowPoints(row, inventory) {
-    return (Number(inventory) / row.amountNeeded) * row.pointsPerAction;
+  function calcPoints(row, inventory) {
+    return (Number(inventory || 0) / row.amountNeeded) * row.pointsPerAction;
   }
 
-  function buildTable() {
-    const tbody = document.getElementById("tableBody");
-    tbody.innerHTML = "";
+  function buildItemsGrid() {
+    const grid = document.getElementById("itemsGrid");
+    grid.innerHTML = "";
 
     rows.forEach(row => {
-      const tr = document.createElement("tr");
       const key = slugify(row.action);
 
-      tr.innerHTML = `
-        <td>${row.action}</td>
-        <td class="num">${formatNumber(row.amountNeeded)}</td>
-        <td class="num">${formatNumber(row.pointsPerAction)}</td>
-        <td>
-          <input
-            class="inventory-input"
-            type="number"
-            min="0"
-            step="any"
-            inputmode="decimal"
-            data-key="${key}"
-            aria-label="${row.action} inventory"
-          />
-        </td>
-        <td class="num" data-points-for="${key}">0</td>
+      const card = document.createElement("div");
+      card.className = "calc-item";
+      card.innerHTML = `
+        <div class="calc-top">
+          <div>
+            <div class="calc-title">${row.action}</div>
+            <div class="muted">Enter how many you currently have</div>
+          </div>
+        </div>
+
+        <div class="mini-grid">
+          <div class="stat">
+            <div class="stat-label">Amount Needed</div>
+            <div class="stat-value">${formatNumber(row.amountNeeded)}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Points Rewarded</div>
+            <div class="stat-value">${formatNumber(row.pointsPerAction)}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Action Type</div>
+            <div class="stat-value">Consume</div>
+          </div>
+        </div>
+
+        <div class="input-wrap">
+          <label class="input-label" for="${key}">My Inventory</label>
+          <input type="number" id="${key}" data-key="${key}" min="0" step="any" inputmode="decimal" placeholder="0" />
+        </div>
+
+        <div class="item-points">
+          <span class="muted">My Points</span>
+          <strong id="${key}-points">0</strong>
+        </div>
       `;
-
-      tbody.appendChild(tr);
+      grid.appendChild(card);
     });
-
-    const totalRow = document.createElement("tr");
-    totalRow.innerHTML = `
-      <td colspan="3"></td>
-      <td class="summary-label">Current total points</td>
-      <td class="num summary-value" id="currentTotal">0</td>
-    `;
-    tbody.appendChild(totalRow);
-
-    const neededRow = document.createElement("tr");
-    neededRow.innerHTML = `
-      <td colspan="3"></td>
-      <td class="summary-label">Points needed until max reward</td>
-      <td class="num summary-value danger" id="pointsNeeded">1,000,000</td>
-    `;
-    tbody.appendChild(neededRow);
   }
 
-  function getInventoryFromInputs() {
-    const result = {};
-    document.querySelectorAll(".inventory-input").forEach(input => {
-      const val = Number(input.value);
-      result[input.dataset.key] = Number.isFinite(val) && val >= 0 ? val : 0;
-    });
-    return result;
+  function getInventory(key) {
+    const input = document.querySelector(`input[data-key="${key}"]`);
+    const val = Number(input?.value || 0);
+    return Number.isFinite(val) && val >= 0 ? val : 0;
   }
 
   function updateTotals() {
-    const values = getInventoryFromInputs();
+    const tbody = document.getElementById("breakdown");
+    const mobileBreakdown = document.getElementById("mobileBreakdown");
+    tbody.innerHTML = "";
+    mobileBreakdown.innerHTML = "";
+
     let total = 0;
 
     rows.forEach(row => {
       const key = slugify(row.action);
-      const inventory = values[key] || 0;
-      const points = calcRowPoints(row, inventory);
-      total += points;
+      const inventory = getInventory(key);
+      const myPoints = calcPoints(row, inventory);
+      total += myPoints;
 
-      const cell = document.querySelector(`[data-points-for="${key}"]`);
-      if (cell) {
-        cell.textContent = formatNumber(points);
-      }
+      const itemPoints = document.getElementById(`${key}-points`);
+      if (itemPoints) itemPoints.textContent = formatNumber(myPoints);
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${row.action}</td>
+        <td class="num">${formatNumber(row.amountNeeded)}</td>
+        <td class="num">${formatNumber(row.pointsPerAction)}</td>
+        <td class="num">${formatNumber(inventory)}</td>
+        <td class="num">${formatNumber(myPoints)}</td>
+      `;
+      tbody.appendChild(tr);
+
+      const mobileRow = document.createElement("div");
+      mobileRow.className = "mobile-row";
+      mobileRow.innerHTML = `
+        <div class="mobile-row-title">${row.action}</div>
+        <div class="mobile-pair"><span>Amount Needed</span><strong>${formatNumber(row.amountNeeded)}</strong></div>
+        <div class="mobile-pair"><span>Points Rewarded</span><strong>${formatNumber(row.pointsPerAction)}</strong></div>
+        <div class="mobile-pair"><span>My Inventory</span><strong>${formatNumber(inventory)}</strong></div>
+        <div class="mobile-pair"><span>My Points</span><strong>${formatNumber(myPoints)}</strong></div>
+      `;
+      mobileBreakdown.appendChild(mobileRow);
     });
 
     const remaining = Math.max(0, MAX_REWARD_POINTS - total);
@@ -288,37 +485,35 @@
   }
 
   function resetInventory() {
-    rows.forEach(row => {
-      const key = slugify(row.action);
-      const input = document.querySelector(`.inventory-input[data-key="${key}"]`);
-      if (input) input.value = "";
+    document.querySelectorAll('#itemsGrid input[type="number"]').forEach(input => {
+      input.value = "";
     });
     updateTotals();
   }
 
   function updateQueryString(push = false) {
     const params = new URLSearchParams();
-    document.querySelectorAll(".inventory-input").forEach(input => {
-      const raw = input.value.trim();
-      if (raw !== "") params.set(input.dataset.key, raw);
+    rows.forEach(row => {
+      const key = slugify(row.action);
+      const input = document.querySelector(`input[data-key="${key}"]`);
+      const raw = input?.value?.trim() || "";
+      if (raw !== "") params.set(key, raw);
     });
 
-    const query = params.toString();
-    const url = query ? `${location.pathname}?${query}` : location.pathname;
-
-    if (push) history.pushState({}, "", url);
-    else history.replaceState({}, "", url);
+    const url = params.toString() ? `${location.pathname}?${params.toString()}` : location.pathname;
+    push ? history.pushState({}, "", url) : history.replaceState({}, "", url);
   }
 
   function applyQueryString() {
     const params = new URLSearchParams(location.search);
-    document.querySelectorAll(".inventory-input").forEach(input => {
-      const value = params.get(input.dataset.key);
-      if (value !== null) input.value = value;
+    rows.forEach(row => {
+      const key = slugify(row.action);
+      const val = params.get(key);
+      if (val === null) return;
+      const input = document.querySelector(`input[data-key="${key}"]`);
+      if (input) input.value = val;
     });
   }
-
-  document.getElementById("resetBtn").addEventListener("click", resetInventory);
 
   document.getElementById("copyLinkBtn").addEventListener("click", () => {
     navigator.clipboard.writeText(location.href)
@@ -326,10 +521,12 @@
       .catch(() => alert("Unable to copy the link in this browser."));
   });
 
-  buildTable();
+  document.getElementById("resetBtn").addEventListener("click", resetInventory);
+
+  buildItemsGrid();
   applyQueryString();
 
-  document.querySelectorAll(".inventory-input").forEach(input => {
+  document.querySelectorAll('#itemsGrid input[type="number"]').forEach(input => {
     input.addEventListener("input", updateTotals);
   });
 
