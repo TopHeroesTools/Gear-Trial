@@ -439,14 +439,16 @@
 
   document.getElementById("resetBtn").addEventListener("click", resetInventory);
 
-  buildItemsGrid();
-  applyQueryString();
+  document.addEventListener("DOMContentLoaded", () => {
+    buildItemsGrid();
+    applyQueryString();
+  
+    document.querySelectorAll('#itemsGrid input[type="number"]').forEach(input => {
+      input.addEventListener("input", updateTotals);
+    });
 
-  document.querySelectorAll('#itemsGrid input[type="number"]').forEach(input => {
-    input.addEventListener("input", updateTotals);
-  });
-
-  updateTotals();
+    updateTotals();
+});
 </script>
 </body>
 </html>
